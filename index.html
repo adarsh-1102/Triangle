@@ -171,7 +171,6 @@
             font-size: 1rem;
         }
         
-        /* New styles for calculation steps */
         .calculation-steps {
             display: flex;
             flex-direction: column;
@@ -470,24 +469,25 @@
                 <div class="python-code">
                     <h4><i class="fab fa-python"></i> Python Implementation</h4>
                     <div class="code-line"><span class="code-comment"># Get side lengths from user</span></div>
-                    <div class="code-line">a = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 1st side:'</span>))</div>
-                    <div class="code-line">b = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 2nd side:'</span>))</div>
-                    <div class="code-line">c = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 3rd side:'</span>))</div>
+                    <div class="code-line">a = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">"side 1"</span>))</div>
+                    <div class="code-line">b = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">"side 2"</span>))</div>
+                    <div class="code-line">c = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">"side 3"</span>))</div>
                     <div class="code-line"></div>
-                    <div class="code-line"><span class="code-comment"># Step 1: Calculate perimeter</span></div>
-                    <div class="code-line">perimeter = a <span class="code-operator">+</span> b <span class="code-operator">+</span> c</div>
+                    <div class="code-line"><span class="code-comment"># Step 1: Calculate sum of sides (perimeter)</span></div>
+                    <div class="code-line">s = (a <span class="code-operator">+</span> b <span class="code-operator">+</span> c)</div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">"sum"</span>, s)</div>
                     <div class="code-line"></div>
                     <div class="code-line"><span class="code-comment"># Step 2: Calculate semi-perimeter</span></div>
-                    <div class="code-line">s = perimeter <span class="code-operator">/</span> <span class="code-number">2</span></div>
+                    <div class="code-line">d = s <span class="code-operator">/</span> <span class="code-number">2</span></div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">"addition"</span>, d)</div>
                     <div class="code-line"></div>
-                    <div class="code-line"><span class="code-comment"># Step 3: Apply Heron's formula for area</span></div>
-                    <div class="code-line">area_squared = s <span class="code-operator">*</span> (s <span class="code-operator">-</span> a) <span class="code-operator">*</span> (s <span class="code-operator">-</span> b) <span class="code-operator">*</span> (s <span class="code-operator">-</span> c)</div>
-                    <div class="code-line">area = area_squared <span class="code-operator">**</span> <span class="code-number">0.5</span></div>
+                    <div class="code-line"><span class="code-comment"># Step 3: Calculate s(s-a)(s-b)(s-c)</span></div>
+                    <div class="code-line">e = d <span class="code-operator">*</span> (d <span class="code-operator">-</span> a) <span class="code-operator">*</span> (d <span class="code-operator">-</span> b) <span class="code-operator">*</span> (d <span class="code-operator">-</span> c)</div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">"saikat"</span>, e)</div>
                     <div class="code-line"></div>
-                    <div class="code-line"><span class="code-comment"># Display the results</span></div>
-                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Perimeter:'</span>, perimeter)</div>
-                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Semi-perimeter:'</span>, s)</div>
-                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Area:'</span>, area)</div>
+                    <div class="code-line"><span class="code-comment"># Step 4: Calculate square root for area</span></div>
+                    <div class="code-line">f = e <span class="code-operator">**</span> <span class="code-number">0.5</span></div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">"area"</span>, f)</div>
                 </div>
             </div>
         </div>
@@ -515,20 +515,24 @@
                     return { valid: false, message: "These sides do not form a valid triangle!" };
                 }
                 
-                // Step 1: Calculate perimeter
-                const perimeter = a + b + c;
+                // Step 1: Calculate sum of sides (perimeter)
+                const sum = a + b + c;
                 
                 // Step 2: Calculate semi-perimeter
-                const s = perimeter / 2;
+                const d = sum / 2;
                 
-                // Step 3: Calculate area using Heron's formula
-                const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+                // Step 3: Calculate s(s-a)(s-b)(s-c)
+                const e = d * (d - a) * (d - b) * (d - c);
+                
+                // Step 4: Calculate area (square root)
+                const f = Math.sqrt(e);
                 
                 return { 
                     valid: true, 
-                    area: area,
-                    perimeter: perimeter,
-                    semiPerimeter: s,
+                    area: f,
+                    sum: sum,
+                    semiPerimeter: d,
+                    intermediate: e,
                     sides: { a, b, c }
                 };
             }
@@ -552,37 +556,47 @@
             
             // Function to create calculation steps HTML
             function createCalculationSteps(calculation) {
-                const perimeter = calculation.perimeter;
-                const semiPerimeter = calculation.semiPerimeter;
-                const area = calculation.area;
+                const sum = calculation.sum;
+                const d = calculation.semiPerimeter;
+                const e = calculation.intermediate;
+                const f = calculation.area;
                 const { a, b, c } = calculation.sides;
                 
                 return `
                     <div class="calculation-step">
                         <div class="step-title">
-                            <i class="fas fa-ruler-combined step-icon"></i>
-                            Step 1: Calculate Perimeter
+                            <i class="fas fa-plus step-icon"></i>
+                            Step 1: Calculate Sum of Sides
                         </div>
-                        <div class="step-value">P = ${formatResult(perimeter)} units</div>
-                        <div class="step-formula">P = a + b + c = ${a} + ${b} + ${c} = ${formatResult(perimeter)}</div>
+                        <div class="step-value">sum = ${formatResult(sum)} units</div>
+                        <div class="step-formula">s = a + b + c = ${a} + ${b} + ${c} = ${formatResult(sum)}</div>
                     </div>
                     
                     <div class="calculation-step">
                         <div class="step-title">
                             <i class="fas fa-divide step-icon"></i>
-                            Step 2: Calculate Semi-perimeter
+                            Step 2: Calculate Semi-perimeter (addition)
                         </div>
-                        <div class="step-value">s = ${formatResult(semiPerimeter)} units</div>
-                        <div class="step-formula">s = P / 2 = ${formatResult(perimeter)} / 2 = ${formatResult(semiPerimeter)}</div>
+                        <div class="step-value">addition = ${formatResult(d)} units</div>
+                        <div class="step-formula">d = s / 2 = ${formatResult(sum)} / 2 = ${formatResult(d)}</div>
+                    </div>
+                    
+                    <div class="calculation-step">
+                        <div class="step-title">
+                            <i class="fas fa-times step-icon"></i>
+                            Step 3: Calculate Intermediate Value (saikat)
+                        </div>
+                        <div class="step-value">saikat = ${formatResult(e)}</div>
+                        <div class="step-formula">e = d × (d - a) × (d - b) × (d - c) = ${formatResult(d)} × (${formatResult(d)} - ${a}) × (${formatResult(d)} - ${b}) × (${formatResult(d)} - ${c})</div>
                     </div>
                     
                     <div class="calculation-step">
                         <div class="step-title">
                             <i class="fas fa-square-root-alt step-icon"></i>
-                            Step 3: Calculate Area (Heron's Formula)
+                            Step 4: Calculate Area
                         </div>
-                        <div class="step-value">Area = ${formatResult(area)} square units</div>
-                        <div class="step-formula">√[s(s-a)(s-b)(s-c)] = √[${formatResult(semiPerimeter)} × (${formatResult(semiPerimeter)} - ${a}) × (${formatResult(semiPerimeter)} - ${b}) × (${formatResult(semiPerimeter)} - ${c})]</div>
+                        <div class="step-value">area = ${formatResult(f)} square units</div>
+                        <div class="step-formula">f = √e = √${formatResult(e)} = ${formatResult(f)}</div>
                     </div>
                 `;
             }
@@ -595,7 +609,13 @@
                     
                     resultDetails.innerHTML = `
                         <p><strong>Side lengths:</strong> a = ${calculation.sides.a}, b = ${calculation.sides.b}, c = ${calculation.sides.c}</p>
-                        <p><strong>Final Result:</strong> The triangle with sides ${calculation.sides.a}, ${calculation.sides.b}, and ${calculation.sides.c} units has an area of ${formatResult(calculation.area)} square units.</p>
+                        <p><strong>Calculation Summary:</strong></p>
+                        <ul style="text-align: left; margin-left: 20px;">
+                            <li>sum (perimeter) = ${formatResult(calculation.sum)}</li>
+                            <li>addition (semi-perimeter) = ${formatResult(calculation.semiPerimeter)}</li>
+                            <li>saikat (s(s-a)(s-b)(s-c)) = ${formatResult(calculation.intermediate)}</li>
+                            <li>area = ${formatResult(calculation.area)}</li>
+                        </ul>
                     `;
                     resultContainer.classList.add('active');
                 } else {
