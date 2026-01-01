@@ -171,6 +171,48 @@
             font-size: 1rem;
         }
         
+        /* New styles for calculation steps */
+        .calculation-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .calculation-step {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4b6cb7;
+            text-align: left;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #182848;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .step-value {
+            font-size: 1.3rem;
+            color: #4b6cb7;
+            font-weight: 600;
+        }
+        
+        .step-formula {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .step-icon {
+            color: #4b6cb7;
+        }
+        
         .formula-box {
             background-color: #f0f5ff;
             border-radius: 10px;
@@ -394,8 +436,13 @@
                 </button>
                 
                 <div class="result-container" id="resultContainer">
-                    <div class="result-title">Area of Triangle:</div>
-                    <div class="result-value" id="resultValue">0.00</div>
+                    <div class="result-title">Triangle Calculations</div>
+                    <div class="result-value" id="resultValue">Area: 0.00</div>
+                    
+                    <div class="calculation-steps" id="calculationSteps">
+                        <!-- Calculation steps will be inserted here -->
+                    </div>
+                    
                     <div class="result-details" id="resultDetails"></div>
                 </div>
             </div>
@@ -414,7 +461,8 @@
                     <p>Where:</p>
                     <ul class="steps">
                         <li><strong>a, b, c</strong> are the lengths of the three sides</li>
-                        <li><strong>s</strong> is the semi-perimeter: s = (a + b + c) / 2</li>
+                        <li><strong>P = a + b + c</strong> is the perimeter</li>
+                        <li><strong>s</strong> is the semi-perimeter: s = P / 2 = (a + b + c) / 2</li>
                         <li><strong>√</strong> represents the square root function</li>
                     </ul>
                 </div>
@@ -426,15 +474,20 @@
                     <div class="code-line">b = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 2nd side:'</span>))</div>
                     <div class="code-line">c = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 3rd side:'</span>))</div>
                     <div class="code-line"></div>
-                    <div class="code-line"><span class="code-comment"># Calculate semi-perimeter</span></div>
-                    <div class="code-line">s = (a <span class="code-operator">+</span> b <span class="code-operator">+</span> c) <span class="code-operator">/</span> <span class="code-number">2</span></div>
+                    <div class="code-line"><span class="code-comment"># Step 1: Calculate perimeter</span></div>
+                    <div class="code-line">perimeter = a <span class="code-operator">+</span> b <span class="code-operator">+</span> c</div>
                     <div class="code-line"></div>
-                    <div class="code-line"><span class="code-comment"># Apply Heron's formula</span></div>
+                    <div class="code-line"><span class="code-comment"># Step 2: Calculate semi-perimeter</span></div>
+                    <div class="code-line">s = perimeter <span class="code-operator">/</span> <span class="code-number">2</span></div>
+                    <div class="code-line"></div>
+                    <div class="code-line"><span class="code-comment"># Step 3: Apply Heron's formula for area</span></div>
                     <div class="code-line">area_squared = s <span class="code-operator">*</span> (s <span class="code-operator">-</span> a) <span class="code-operator">*</span> (s <span class="code-operator">-</span> b) <span class="code-operator">*</span> (s <span class="code-operator">-</span> c)</div>
                     <div class="code-line">area = area_squared <span class="code-operator">**</span> <span class="code-number">0.5</span></div>
                     <div class="code-line"></div>
-                    <div class="code-line"><span class="code-comment"># Display the result</span></div>
-                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Area ='</span>, area)</div>
+                    <div class="code-line"><span class="code-comment"># Display the results</span></div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Perimeter:'</span>, perimeter)</div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Semi-perimeter:'</span>, s)</div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Area:'</span>, area)</div>
                 </div>
             </div>
         </div>
@@ -453,6 +506,7 @@
             const resultContainer = document.getElementById('resultContainer');
             const resultValue = document.getElementById('resultValue');
             const resultDetails = document.getElementById('resultDetails');
+            const calculationSteps = document.getElementById('calculationSteps');
             
             // Function to calculate triangle area using Heron's formula
             function calculateTriangleArea(a, b, c) {
@@ -461,15 +515,19 @@
                     return { valid: false, message: "These sides do not form a valid triangle!" };
                 }
                 
-                // Calculate semi-perimeter
-                const s = (a + b + c) / 2;
+                // Step 1: Calculate perimeter
+                const perimeter = a + b + c;
                 
-                // Calculate area using Heron's formula
+                // Step 2: Calculate semi-perimeter
+                const s = perimeter / 2;
+                
+                // Step 3: Calculate area using Heron's formula
                 const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
                 
                 return { 
                     valid: true, 
                     area: area,
+                    perimeter: perimeter,
                     semiPerimeter: s,
                     sides: { a, b, c }
                 };
@@ -492,21 +550,57 @@
                 });
             }
             
+            // Function to create calculation steps HTML
+            function createCalculationSteps(calculation) {
+                const perimeter = calculation.perimeter;
+                const semiPerimeter = calculation.semiPerimeter;
+                const area = calculation.area;
+                const { a, b, c } = calculation.sides;
+                
+                return `
+                    <div class="calculation-step">
+                        <div class="step-title">
+                            <i class="fas fa-ruler-combined step-icon"></i>
+                            Step 1: Calculate Perimeter
+                        </div>
+                        <div class="step-value">P = ${formatResult(perimeter)} units</div>
+                        <div class="step-formula">P = a + b + c = ${a} + ${b} + ${c} = ${formatResult(perimeter)}</div>
+                    </div>
+                    
+                    <div class="calculation-step">
+                        <div class="step-title">
+                            <i class="fas fa-divide step-icon"></i>
+                            Step 2: Calculate Semi-perimeter
+                        </div>
+                        <div class="step-value">s = ${formatResult(semiPerimeter)} units</div>
+                        <div class="step-formula">s = P / 2 = ${formatResult(perimeter)} / 2 = ${formatResult(semiPerimeter)}</div>
+                    </div>
+                    
+                    <div class="calculation-step">
+                        <div class="step-title">
+                            <i class="fas fa-square-root-alt step-icon"></i>
+                            Step 3: Calculate Area (Heron's Formula)
+                        </div>
+                        <div class="step-value">Area = ${formatResult(area)} square units</div>
+                        <div class="step-formula">√[s(s-a)(s-b)(s-c)] = √[${formatResult(semiPerimeter)} × (${formatResult(semiPerimeter)} - ${a}) × (${formatResult(semiPerimeter)} - ${b}) × (${formatResult(semiPerimeter)} - ${c})]</div>
+                    </div>
+                `;
+            }
+            
             // Function to update the result display
             function updateResult(calculation) {
                 if (calculation.valid) {
-                    resultValue.textContent = formatResult(calculation.area);
+                    resultValue.textContent = `Area: ${formatResult(calculation.area)} square units`;
+                    calculationSteps.innerHTML = createCalculationSteps(calculation);
+                    
                     resultDetails.innerHTML = `
-                        <p><strong>Semi-perimeter (s):</strong> ${formatResult(calculation.semiPerimeter)} units</p>
                         <p><strong>Side lengths:</strong> a = ${calculation.sides.a}, b = ${calculation.sides.b}, c = ${calculation.sides.c}</p>
-                        <p><strong>Formula:</strong> √[${formatResult(calculation.semiPerimeter)} × 
-                        (${formatResult(calculation.semiPerimeter)} − ${calculation.sides.a}) × 
-                        (${formatResult(calculation.semiPerimeter)} − ${calculation.sides.b}) × 
-                        (${formatResult(calculation.semiPerimeter)} − ${calculation.sides.c})]</p>
+                        <p><strong>Final Result:</strong> The triangle with sides ${calculation.sides.a}, ${calculation.sides.b}, and ${calculation.sides.c} units has an area of ${formatResult(calculation.area)} square units.</p>
                     `;
                     resultContainer.classList.add('active');
                 } else {
-                    resultValue.textContent = "Invalid";
+                    resultValue.textContent = "Invalid Triangle";
+                    calculationSteps.innerHTML = '';
                     resultDetails.textContent = calculation.message;
                     resultContainer.classList.add('active');
                 }
@@ -530,7 +624,7 @@
                     return;
                 }
                 
-                // Calculate area
+                // Calculate area and related values
                 const calculation = calculateTriangleArea(a, b, c);
                 
                 // Update result display
