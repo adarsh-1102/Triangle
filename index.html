@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triangle Area Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+        }
+        
+        .calculator-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 40px;
+            background-color: #f9f9f9;
+        }
+        
+        .formula-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 40px;
+            background-color: white;
+            border-left: 1px solid #eee;
+        }
+        
+        .section-title {
+            color: #182848;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4b6cb7;
+            font-size: 1.5rem;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-with-unit {
+            position: relative;
+        }
+        
+        .input-with-unit input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-with-unit input:focus {
+            border-color: #4b6cb7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        .unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-weight: 500;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            border: none;
+            padding: 17px 30px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(75, 108, 183, 0.3);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-container {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: #eef2ff;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result-container.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #182848;
+            margin-bottom: 15px;
+        }
+        
+        .result-details {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .formula-box {
+            background-color: #f0f5ff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .formula-box h3 {
+            color: #182848;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .formula {
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            border: 1px dashed #4b6cb7;
+        }
+        
+        .steps {
+            list-style-type: none;
+        }
+        
+        .steps li {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .steps li:before {
+            content: counter(step);
+            counter-increment: step;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: #4b6cb7;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 0.9rem;
+        }
+        
+        .steps {
+            counter-reset: step;
+        }
+        
+        .python-code {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin-top: 30px;
+        }
+        
+        .python-code h4 {
+            color: #ffcc66;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .code-line {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .code-comment {
+            color: #999;
+        }
+        
+        .code-keyword {
+            color: #ff79c6;
+        }
+        
+        .code-function {
+            color: #50fa7b;
+        }
+        
+        .code-string {
+            color: #f1fa8c;
+        }
+        
+        .code-operator {
+            color: #ff79c6;
+        }
+        
+        .code-number {
+            color: #bd93f9;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f1f5fd;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .formula-section {
+                border-left: none;
+                border-top: 1px solid #eee;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        .triangle-visualization {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .triangle {
+            width: 150px;
+            height: 130px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .triangle:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-left: 75px solid transparent;
+            border-right: 75px solid transparent;
+            border-bottom: 130px solid rgba(75, 108, 183, 0.2);
+        }
+        
+        .side-label {
+            position: absolute;
+            font-weight: bold;
+            color: #182848;
+        }
+        
+        .side-a {
+            top: 50%;
+            left: -30px;
+        }
+        
+        .side-b {
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .side-c {
+            top: 50%;
+            right: -30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-calculator"></i> Triangle Area Calculator</h1>
+            <p>Calculate the area of a triangle using Heron's formula</p>
+        </div>
+        
+        <div class="content">
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Calculator</h2>
+                
+                <div class="triangle-visualization">
+                    <div class="triangle">
+                        <div class="side-label side-a">a</div>
+                        <div class="side-label side-b">b</div>
+                        <div class="side-label side-c">c</div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="sideA"><i class="fas fa-ruler"></i> Enter 1st side (a):</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="sideA" step="any" min="0.1" placeholder="e.g., 5.5">
+                        <span class="unit">units</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="sideB"><i class="fas fa-ruler"></i> Enter 2nd side (b):</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="sideB" step="any" min="0.1" placeholder="e.g., 6.2">
+                        <span class="unit">units</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="sideC"><i class="fas fa-ruler"></i> Enter 3rd side (c):</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="sideC" step="any" min="0.1" placeholder="e.g., 7.8">
+                        <span class="unit">units</span>
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" id="calculateBtn">
+                    <i class="fas fa-calculator"></i> Calculate Area
+                </button>
+                
+                <div class="result-container" id="resultContainer">
+                    <div class="result-title">Area of Triangle:</div>
+                    <div class="result-value" id="resultValue">0.00</div>
+                    <div class="result-details" id="resultDetails"></div>
+                </div>
+            </div>
+            
+            <div class="formula-section">
+                <h2 class="section-title"><i class="fas fa-square-root-alt"></i> Heron's Formula</h2>
+                
+                <div class="formula-box">
+                    <h3>Formula for Triangle Area</h3>
+                    <p>Heron's formula calculates the area of a triangle when you know the lengths of all three sides.</p>
+                    
+                    <div class="formula">
+                        Area = √[s(s-a)(s-b)(s-c)]
+                    </div>
+                    
+                    <p>Where:</p>
+                    <ul class="steps">
+                        <li><strong>a, b, c</strong> are the lengths of the three sides</li>
+                        <li><strong>s</strong> is the semi-perimeter: s = (a + b + c) / 2</li>
+                        <li><strong>√</strong> represents the square root function</li>
+                    </ul>
+                </div>
+                
+                <div class="python-code">
+                    <h4><i class="fab fa-python"></i> Python Implementation</h4>
+                    <div class="code-line"><span class="code-comment"># Get side lengths from user</span></div>
+                    <div class="code-line">a = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 1st side:'</span>))</div>
+                    <div class="code-line">b = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 2nd side:'</span>))</div>
+                    <div class="code-line">c = <span class="code-function">float</span>(<span class="code-function">input</span>(<span class="code-string">'Enter 3rd side:'</span>))</div>
+                    <div class="code-line"></div>
+                    <div class="code-line"><span class="code-comment"># Calculate semi-perimeter</span></div>
+                    <div class="code-line">s = (a <span class="code-operator">+</span> b <span class="code-operator">+</span> c) <span class="code-operator">/</span> <span class="code-number">2</span></div>
+                    <div class="code-line"></div>
+                    <div class="code-line"><span class="code-comment"># Apply Heron's formula</span></div>
+                    <div class="code-line">area_squared = s <span class="code-operator">*</span> (s <span class="code-operator">-</span> a) <span class="code-operator">*</span> (s <span class="code-operator">-</span> b) <span class="code-operator">*</span> (s <span class="code-operator">-</span> c)</div>
+                    <div class="code-line">area = area_squared <span class="code-operator">**</span> <span class="code-number">0.5</span></div>
+                    <div class="code-line"></div>
+                    <div class="code-line"><span class="code-comment"># Display the result</span></div>
+                    <div class="code-line"><span class="code-function">print</span>(<span class="code-string">'Area ='</span>, area)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Triangle Area Calculator &copy; 2023 | Uses Heron's Formula</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sideAInput = document.getElementById('sideA');
+            const sideBInput = document.getElementById('sideB');
+            const sideCInput = document.getElementById('sideC');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultValue = document.getElementById('resultValue');
+            const resultDetails = document.getElementById('resultDetails');
+            
+            // Function to calculate triangle area using Heron's formula
+            function calculateTriangleArea(a, b, c) {
+                // Check if the sides form a valid triangle
+                if (a + b <= c || a + c <= b || b + c <= a) {
+                    return { valid: false, message: "These sides do not form a valid triangle!" };
+                }
+                
+                // Calculate semi-perimeter
+                const s = (a + b + c) / 2;
+                
+                // Calculate area using Heron's formula
+                const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+                
+                return { 
+                    valid: true, 
+                    area: area,
+                    semiPerimeter: s,
+                    sides: { a, b, c }
+                };
+            }
+            
+            // Function to format the result with appropriate unit
+            function formatResult(value) {
+                // Round to 4 decimal places
+                const roundedValue = Math.round(value * 10000) / 10000;
+                
+                // If the value is very small, use scientific notation
+                if (roundedValue < 0.0001 && roundedValue > 0) {
+                    return value.toExponential(4);
+                }
+                
+                // Otherwise, return with appropriate decimal places
+                return roundedValue.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 4
+                });
+            }
+            
+            // Function to update the result display
+            function updateResult(calculation) {
+                if (calculation.valid) {
+                    resultValue.textContent = formatResult(calculation.area);
+                    resultDetails.innerHTML = `
+                        <p><strong>Semi-perimeter (s):</strong> ${formatResult(calculation.semiPerimeter)} units</p>
+                        <p><strong>Side lengths:</strong> a = ${calculation.sides.a}, b = ${calculation.sides.b}, c = ${calculation.sides.c}</p>
+                        <p><strong>Formula:</strong> √[${formatResult(calculation.semiPerimeter)} × 
+                        (${formatResult(calculation.semiPerimeter)} − ${calculation.sides.a}) × 
+                        (${formatResult(calculation.semiPerimeter)} − ${calculation.sides.b}) × 
+                        (${formatResult(calculation.semiPerimeter)} − ${calculation.sides.c})]</p>
+                    `;
+                    resultContainer.classList.add('active');
+                } else {
+                    resultValue.textContent = "Invalid";
+                    resultDetails.textContent = calculation.message;
+                    resultContainer.classList.add('active');
+                }
+            }
+            
+            // Calculate button click event
+            calculateBtn.addEventListener('click', function() {
+                // Get input values
+                const a = parseFloat(sideAInput.value);
+                const b = parseFloat(sideBInput.value);
+                const c = parseFloat(sideCInput.value);
+                
+                // Validate inputs
+                if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                    alert("Please enter valid numbers for all three sides!");
+                    return;
+                }
+                
+                if (a <= 0 || b <= 0 || c <= 0) {
+                    alert("Side lengths must be positive numbers!");
+                    return;
+                }
+                
+                // Calculate area
+                const calculation = calculateTriangleArea(a, b, c);
+                
+                // Update result display
+                updateResult(calculation);
+            });
+            
+            // Allow pressing Enter to calculate
+            const inputs = [sideAInput, sideBInput, sideCInput];
+            inputs.forEach(input => {
+                input.addEventListener('keyup', function(event) {
+                    if (event.key === 'Enter') {
+                        calculateBtn.click();
+                    }
+                });
+            });
+            
+            // Add example values for demonstration
+            sideAInput.value = "5";
+            sideBInput.value = "6";
+            sideCInput.value = "7";
+            
+            // Calculate with example values on load
+            setTimeout(() => {
+                calculateBtn.click();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
